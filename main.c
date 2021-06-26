@@ -25,6 +25,24 @@ void print_pagina(PAGINA *pg) {
 int main() {
   limpa_arvore();
   ARVORE *arv = cria_arvore();
+
+  /* char entrada[15];
+
+  clean_files();
+  CLASS *students_class = load_students();
+
+  scanf("%s", entrada);
+
+  while (strcmp("exit", entrada)) {
+
+    if (!strcmp("insert", comand)) insert(students_class);
+    else if (!strcmp("search", comand)) search(students_class);
+    else if (!strcmp("update", comand)) update(students_class);
+
+    scanf("%s", entrada);
+  }
+
+  exit_program(students_class); */
   
   inserir_btree(arv, 5);
   inserir_btree(arv, 43);
@@ -73,26 +91,6 @@ int main() {
   inserir_btree(arv, 20);
   inserir_btree(arv, 44); */
 
-  
-
-  
-  /* char entrada[15];
-
-  clean_files();
-  CLASS *students_class = load_students();
-
-  scanf("%s", entrada);
-
-  while (strcmp("exit", entrada)) {
-
-    if (!strcmp("insert", entrada)) insert(students_class);
-    if (!strcmp("search", entrada)) search(students_class);
-    if (!strcmp("delete", entrada)) delete(students_class);
-
-    scanf("%s", entrada);
-  }
-
-  exit_program(students_class); */
 
   return 0;
 }

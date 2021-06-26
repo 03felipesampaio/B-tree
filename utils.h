@@ -9,10 +9,10 @@
 #include "data.h"
 
 void clean_files();
-void insert(CLASS *students_class);
-void search(CLASS *students_class);
-void delete(CLASS *students_class);
-void exit_program(CLASS *students_class);
-void print_student(STUDENT *s);
+void insert(ARVORE *arv);
+void search(ARVORE *arv);
+void update(ARVORE *arv);
+void exit_program(ARVORE *arv);
+void print_student(PAGINA *page);
 
 #endif

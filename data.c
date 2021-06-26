@@ -12,9 +12,9 @@ STUDENT *create_student(int nUSP, char name[], char surname[], char course[], fl
     return new_student;
 }
 
-STUDENT *search_student(ARVORE *arvore, int key) {
+STUDENT search_student(ARVORE *arvore, int key) {
     STUDENT *student = (STUDENT*) malloc (sizeof(STUDENT));
-    int RRN = search_RRN(student_class->indexes, key);
+    int RRN = busca(arvore, key);
 
     if(RRN == -1) {
         return NULL;
@@ -23,7 +23,7 @@ STUDENT *search_student(ARVORE *arvore, int key) {
     fseek(student_class->class_file, RRN, SEEK_SET);
     fread(student, sizeof(STUDENT), 1, student_class->class_file);
 
-    return student;
+    return STUDENT;
 }
 
 void insert_student(ARVORE *arvore, STUDENT *student) {
@@ -43,9 +43,8 @@ void update_student(ARVORE *arvore, int key) {
 
 }
 
-void close_file(CLASS *students_class) {
+void close_file(ARVORE *arv) {
     fclose(students_class->class_file);
-    save_index_file(students_class->indexes);
 
     free(students_class);
 }

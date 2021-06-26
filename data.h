@@ -6,6 +6,7 @@
 #include <string.h>
 #include <assert.h>
 #include "btree.h"
+#define ARQUIVO "binFiles/estudantes.data"
 
 typedef struct {
     int nUSP;
@@ -26,7 +27,6 @@ STUDENT *create_student(int nUSP, char name[], char surname[], char course[], fl
 CLASS *load_students();
 STUDENT *search_student(CLASS *student_class, int key);
 void insert_student(CLASS *students_class, STUDENT *student);
-void remove_student(CLASS *students_class, int key);
 void close_file(CLASS *students_class);
 
 #endif

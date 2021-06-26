@@ -11,7 +11,7 @@ void clean_files() {
     fclose(fp);
 }
 
-void insert(CLASS *students_class) {
+void insert(ARVORE *arv) {
     int nUSP;
     char name[30], course[30], surname[30];
     float grade;
@@ -19,26 +19,20 @@ void insert(CLASS *students_class) {
     scanf("%d,%[^,],%[^,],%[^,],%f", &nUSP, name, surname, course, &grade);
 
     STUDENT *new_student = create_student(nUSP, name, surname, course, grade);
-
-    insert_student(students_class, new_student);
+    inserir_btree(arv, new_student->nUSP);
+    insert_student(arv, new_student);
 
     free(new_student);
 }
 
-void search(CLASS *students_class) {
+void search(ARVORE *arv) {
     int key;
     
     scanf("%d", &key);
-    STUDENT* student = search_student(students_class, key);
+    STUDENT student = busca(arv, key);
+
     print_student(student);
     free(student);
-}
-
-void delete(CLASS *students_class) {
-    int key;
-    
-    scanf("%d", &key);
-    remove_student(students_class, key);
 }
 
 void print_student(STUDENT *s) {
@@ -55,6 +49,6 @@ void print_student(STUDENT *s) {
   printf("-------------------------------\n");
 }
 
-void exit_program(CLASS *students_class) {
+void exit_program(ARVORE *arv) {
     close_file(students_class);
 }
