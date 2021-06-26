@@ -12,20 +12,7 @@ STUDENT *create_student(int nUSP, char name[], char surname[], char course[], fl
     return new_student;
 }
 
-CLASS *load_students() {
-    // Load all students from binFiles/data.bin, but just the RRN
-    // and create a classroom struct
-    CLASS *students_class = (CLASS*) malloc (sizeof(CLASS));
-
-    students_class->indexes = load_indexes();
-    students_class->len = students_class->indexes->len;
-    students_class->class_file = fopen("binFiles/data.bin", "r+");
-    assert(students_class->class_file);
-
-    return students_class;
-}
-
-STUDENT *search_student(CLASS *student_class, int key) {
+STUDENT *search_student(ARVORE *arvore, int key) {
     STUDENT *student = (STUDENT*) malloc (sizeof(STUDENT));
     int RRN = search_RRN(student_class->indexes, key);
 
@@ -39,7 +26,7 @@ STUDENT *search_student(CLASS *student_class, int key) {
     return student;
 }
 
-void insert_student(CLASS *students_class, STUDENT *student) {
+void insert_student(ARVORE *arvore, STUDENT *student) {
     if(search_RRN(students_class->indexes, student->nUSP) != -1) {
         printf("O Registro ja existe!\n");
         return;
@@ -52,18 +39,8 @@ void insert_student(CLASS *students_class, STUDENT *student) {
     students_class->len++;
 }
 
-void remove_student(CLASS *students_class, int key) {
-    int RRN = search_RRN(students_class->indexes, key);
-    if(RRN == -1) return;
+void update_student(ARVORE *arvore, int key) {
 
-    int x = -1;
-
-    fseek(students_class->class_file, RRN, SEEK_SET);
-    // Remove logically by switching nUSP to -1 in file
-    fwrite(&x, sizeof(int), 1, students_class->class_file);
-    // Remove from index list
-    remove_index(students_class->indexes, key);
-    students_class->len--;
 }
 
 void close_file(CLASS *students_class) {

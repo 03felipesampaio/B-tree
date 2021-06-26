@@ -37,37 +37,4 @@ void inserir_btree(ARVORE *arvore, int key);
 PAGINA *ler_pagina(long rrn);
 long busca(ARVORE *btree, int key); // TODO
 
-/* Desconsiderar a partir daqui */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-typedef struct {
-  int key;
-  int pos;
-} INDEX;
-
-typedef struct {
-  INDEX *list;
-  int len;
-} INDEX_LIST;
-
-INDEX_LIST *load_indexes();
-int search_RRN(INDEX_LIST *indexes, int key);
-void insert_index(INDEX_LIST *indexes, int RRN, int key);
-void remove_index(INDEX_LIST *indexes, int key);
-void save_index_file(INDEX_LIST *indexes);
-
 #endif
