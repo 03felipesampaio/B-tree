@@ -14,27 +14,28 @@
 #define ARQ_BTREE "binFiles/btree.dat"
 #define MAX_KEYS 3
 
+typedef struct registro {
+  int key;
+  long rrn;
+} REGISTRO;
+
 typedef struct pagina {
   short num_keys;
+  // REGISTRO vetor[MAX_KEYS];
   int keys[MAX_KEYS];
-  int rrns[MAX_KEYS];
+  long rrns[MAX_KEYS];
   long prox_paginas[MAX_KEYS+1];
 } PAGINA;
 
 typedef struct header {
   long rrn_raiz;
-  int m;
+  int m; // Numero de elementos por pagina
 } ARVORE;
-
-typedef struct {
-  int key;
-  int rrn;
-  PAGINA *pags[2];
-} NO_TEMPORARIO;
 
 ARVORE *cria_arvore();
 void inserir_btree(ARVORE *arvore, int key);
 PAGINA *ler_pagina(long rrn);
+long busca(ARVORE *btree, int key); // TODO
 
 /* Desconsiderar a partir daqui */
 

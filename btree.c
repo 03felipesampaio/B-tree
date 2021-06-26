@@ -6,18 +6,21 @@ int inserir(long rrn, int key, long *segunda_metade, int *key_promovida);
 int busca_binaria(PAGINA *pagina, int key);
 void inserir_na_pagina(PAGINA *pagina, int key, long filho_direito);
 void reescreve_pagina(long rrn, PAGINA* pagina);
+void split(PAGINA *pagina_atual, int key, long filho_direito_promovido,
+           int *chave_promovida, long *filho_direito, int pos) ;
 
 ARVORE *cria_arvore() {
     ARVORE *nova_arvore = (ARVORE*) malloc (sizeof(ARVORE));
     FILE *fp = fopen(ARQ_BTREE, "r+");
 
+    // Caso a arvore exista
     if(fread(nova_arvore, sizeof(ARVORE), 1, fp)) {
         printf("Arvore ja existia\n");
-    } else {
+    } else { // Caso a arvore nao exista
         printf("Arvore nao existia\n");
         nova_arvore->rrn_raiz = 0;
         nova_arvore->m = MAX_KEYS;
-        fwrite(nova_arvore, sizeof(ARVORE), 1, fp);
+        fwrite(nova_arvore, sizeof(ARVORE), 1, fp); // Escreve arvore no arquivo
     }
 
     fclose(fp);
@@ -26,29 +29,29 @@ ARVORE *cria_arvore() {
 
 // Funcao auxiliar para inserir na btree
 void inserir_btree(ARVORE *arvore, int key) {
-    int sinal;
-    int key_promovida;
-    long segunda_metade;
+    int flag; // Flag da funcao inserir
+    int key_promovida; // Key promovida
+    long segunda_metade; // Filho direito do elemento promovido
 
     // Chama funcao principal
-    sinal = inserir(arvore->rrn_raiz, key, &segunda_metade, &key_promovida);
+    flag = inserir(arvore->rrn_raiz, key, &segunda_metade, &key_promovida);
 
     // Nesse caso houve uma promocao na raiz, devemos criar outra raiz
-    if(sinal == PROMOVIDA) {
-        printf("Deve criar uma raiz\n");
+    if(flag == PROMOVIDA) {
         atualiza_raiz(arvore, key_promovida, arvore->rrn_raiz, segunda_metade);
+        PAGINA *pg = ler_pagina(arvore->rrn_raiz);
+        printf("Criou raiz -> Key = %d\n", pg->keys[0]);
     }
 }
 
 int inserir(long rrn, int key, long *segunda_metade, int *key_promovida) {
-    PAGINA *pagina_atual, *nova_pagina;
+    PAGINA *pagina_atual;
     int flag;
     long pos, filho_direito_promovido;
     int chave_promovida;
     
     // Condicao de parada da recursao
     if(rrn == 0) {
-        printf("Chegou no fundo do poço\n");
         *key_promovida = key;
         *segunda_metade = 0;
         return PROMOVIDA;
@@ -78,7 +81,8 @@ int inserir(long rrn, int key, long *segunda_metade, int *key_promovida) {
         printf("Esta inserindo a key %d no vetor, na posicao %ld\n", key, pos);
         return NAO_PROMOVIDA;
     } else { // Caso a pagina atual esteja cheia
-        // split()
+        split(pagina_atual, key, filho_direito_promovido, key_promovida, segunda_metade, pos);
+        reescreve_pagina(rrn, pagina_atual);
         return PROMOVIDA;
     }
 
@@ -92,7 +96,6 @@ void atualiza_raiz(ARVORE *arvore, int key, long primeira_metade, long segunda_m
     nova_pagina->prox_paginas[0] = primeira_metade;
     nova_pagina->prox_paginas[1] = segunda_metade;
     nova_pagina->num_keys++;
-    printf("Primeiro elemento -> %d | tam vetor = %d\n", nova_pagina->keys[0], nova_pagina->num_keys);
     // Escreve pagina no final do arquivo
     arvore->rrn_raiz = append_pagina(nova_pagina);
 }
@@ -111,13 +114,16 @@ long append_pagina(PAGINA *nova_pagina) {
 void split(PAGINA *pagina_atual, int key, long filho_direito_promovido,
            int *chave_promovida, long *filho_direito, int pos) {
     
-    int MIN_KEYS = MAX_KEYS / 2;
+    int MIN_KEYS = MAX_KEYS / 2; // 1
+    // MAX KEYS = 3
     
     PAGINA *primeira_metade = pagina_atual;
     PAGINA *segunda_metade = (PAGINA *) calloc(1, sizeof(PAGINA));
     
-    int vetor_extendido_keys[MAX_KEYS+1];
-    int vetor_extendido_filhos[MAX_KEYS+2];
+    int vetor_extendido_keys[MAX_KEYS+1]; // [5, 12, 43] -> [65] -> [5, 12, 43, 65]
+    long vetor_extendido_filhos[MAX_KEYS+2];
+
+    printf("Entrou na split\n");
 
     // Copiar itens para vetores
     memcpy(&vetor_extendido_keys, &pagina_atual->keys, sizeof(int) * MAX_KEYS);
@@ -130,22 +136,26 @@ void split(PAGINA *pagina_atual, int key, long filho_direito_promovido,
     vetor_extendido_filhos[pos+1] = filho_direito_promovido;
 
     // Separa a pagina atual em duas partes
-    memcpy(&primeira_metade->keys, &vetor_extendido_keys[0], sizeof(int) * (MIN_KEYS));
-    primeira_metade->num_keys = MIN_KEYS;
-    memcpy(&segunda_metade->keys, &vetor_extendido_keys[MIN_KEYS + 1], sizeof(int) * (MIN_KEYS + 1));
-    segunda_metade->num_keys = MAX_KEYS - MIN_KEYS;
-    memcpy(&primeira_metade->prox_paginas, &vetor_extendido_filhos[0], sizeof(long) * (MAX_KEYS - MIN_KEYS));
-    memcpy(&segunda_metade->prox_paginas, &vetor_extendido_filhos[MIN_KEYS + 1], sizeof(long) * (MIN_KEYS - MIN_KEYS + 1));
+    // [5, 12]
+    memcpy(primeira_metade->keys, &vetor_extendido_keys[0], sizeof(int) * (MAX_KEYS - MIN_KEYS));
+    primeira_metade->num_keys = MAX_KEYS - MIN_KEYS;
+    // [65]
+    memcpy(segunda_metade->keys, &vetor_extendido_keys[MIN_KEYS + 2], sizeof(int) * (MIN_KEYS));
+    segunda_metade->num_keys = MIN_KEYS;
+    // Atualiza o vetor de filhos
+    memcpy(primeira_metade->prox_paginas, &vetor_extendido_filhos[0], sizeof(long) * (MAX_KEYS - MIN_KEYS));
+    memcpy(segunda_metade->prox_paginas, &vetor_extendido_filhos[MIN_KEYS + 1], sizeof(long) * (MIN_KEYS+ 1));
 
     // Promove chave
-    *chave_promovida = vetor_extendido_keys[MAX_KEYS / 2];
-    *filho_direito = append_pagina(segunda_metade);
+    // 43
+    *chave_promovida = vetor_extendido_keys[MAX_KEYS - MIN_KEYS];
+    *filho_direito = append_pagina(segunda_metade); // [65]
+    
+    printf("Key promovida é -> %d\n", *chave_promovida);
 }
 
 // Le pagina do arquivo para memoria
 PAGINA *ler_pagina(long rrn) {
-    printf("Tentando ler pagina\n");
-
     FILE *fp = fopen(ARQ_BTREE, "r");
     PAGINA *pagina = (PAGINA*) malloc(sizeof(PAGINA));
 
@@ -153,7 +163,7 @@ PAGINA *ler_pagina(long rrn) {
     fread(pagina, sizeof(PAGINA), 1, fp);
     
     fclose(fp);
-    printf("Leu pagina, primeiro elemento = %d\n", pagina->keys[0]);
+    // printf("Leu pagina, primeiro elemento = %d\n", pagina->keys[0]);
     return pagina;
 }
 
@@ -198,6 +208,10 @@ void reescreve_pagina(long rrn, PAGINA* pagina) {
     fwrite(pagina, sizeof(PAGINA), 1, fp);
 
     fclose(fp);
+}
+
+long busca(ARVORE *btree, int key) {
+    return -1;
 }
 
 /* Desconsiderar a partir daqui */
