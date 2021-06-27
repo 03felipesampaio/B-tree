@@ -2,107 +2,139 @@
 
 long append_pagina(PAGINA *nova_pagina);
 void atualiza_raiz(ARVORE *arvore, int key, long primeira_metade, long segunda_metade);
-int inserir(long rrn, int key, long *segunda_metade, int *key_promovida);
+int inserir(long rrn_pag, int *key, long *rrn_reg, long *filho_direito_promovido);
 int busca_binaria(PAGINA *pagina, int key);
-void inserir_na_pagina(PAGINA *pagina, int key, long filho_direito);
+void inserir_na_pagina(PAGINA *pagina, int key, long rrn, long filho_direito);
 void reescreve_pagina(long rrn, PAGINA* pagina);
-void split(PAGINA *pagina_atual, long *filho_direito_promovido, int *key) ;
+void split(PAGINA *pagina_atual, long *filho_direito_promovido, int *key, long *rrn) ;
+long busca(long rrn, int key);
 
 // Funcao auxiliar para inserir na btree
-void inserir_btree(ARVORE *arvore, int key) {
+void inserir_btree(ARVORE *arvore, int key, long rrn_reg) {
     int flag; // Flag da funcao inserir
-    int key_promovida; // Key promovida
-    long segunda_metade; // Filho direito do elemento promovido
+    long segunda_metade = 0; // Filho direito do elemento promovido
 
     // Chama funcao principal
-    flag = inserir(arvore->rrn_raiz, key, &segunda_metade, &key_promovida);
+    flag = inserir(arvore->rrn_raiz, &key, &rrn_reg, &segunda_metade);
 
     // Nesse caso houve uma promocao na raiz, devemos criar outra raiz
     if(flag == PROMOVIDA) {
-        atualiza_raiz(arvore, key_promovida, arvore->rrn_raiz, segunda_metade);
+        atualiza_raiz(arvore, key, arvore->rrn_raiz, segunda_metade);
     }
 }
 
-int inserir(long rrn, int key, long *filho_direito_promovido, int *key_promovida) {
+int inserir(long rrn_pag, int *key, long *rrn_reg, long *filho_direito_promovido) {
     PAGINA *pagina_atual;
     int flag, pos;
     
     // Condicao de parada da recursao
-    if(rrn == 0) {
-        *key_promovida = key;
-        *filho_direito_promovido = 0;
+    if(rrn_pag == 0) {
         return PROMOVIDA;
     }
 
     // Le a pagina no arquivo
-    pagina_atual = le_pagina(rrn);
+    pagina_atual = le_pagina(rrn_pag);
     
     // Encontra posicao de insercao
-    pos = busca_binaria(pagina_atual, key);
-    if(pos == ERRO) {
+    pos = busca_binaria(pagina_atual, *key);
+    if(pagina_atual->keys[pos] == *key) {
         printf("A key ja estra inserida\n");
         return ERRO;
     }
 
-    flag = inserir(pagina_atual->prox_paginas[pos], key, filho_direito_promovido, key_promovida);
+    flag = inserir(pagina_atual->prox_paginas[pos], key, rrn_reg, filho_direito_promovido);
 
     // Caso nao haja promocao ou haja erro
     if(flag != PROMOVIDA) {
+        free(pagina_atual);
         return NAO_PROMOVIDA;
     }
 
     // Se ha promocao e a pagina atual nao esta cheia
     if(pagina_atual->num_keys < MAX_KEYS) {
-        inserir_na_pagina(pagina_atual, *key_promovida, *filho_direito_promovido);
-        reescreve_pagina(rrn, pagina_atual);
+        inserir_na_pagina(pagina_atual, *key, *rrn_reg,*filho_direito_promovido);
+        reescreve_pagina(rrn_pag, pagina_atual);
+        free(pagina_atual);
         return NAO_PROMOVIDA;
     } else { // Caso a pagina atual esteja cheia
-        split(pagina_atual, filho_direito_promovido, key_promovida);
-        reescreve_pagina(rrn, pagina_atual);
+        split(pagina_atual, filho_direito_promovido, key, rrn_reg);
+        reescreve_pagina(rrn_pag, pagina_atual);
+        free(pagina_atual);
         return PROMOVIDA;
     }
-
 }
 
-void split(PAGINA *pagina_atual, long *filho_direito_promovido, int *key) {
+void split(PAGINA *pagina_atual, long *filho_direito_promovido, int *key, long *rrn) {
     
-    int MIN_KEYS = MAX_KEYS / 2;
+    int MIN_KEYS = MAX_KEYS / 2; // Numero minimo de chaves em uma pagina
     
     PAGINA *primeira_metade = pagina_atual;
     PAGINA *segunda_metade = (PAGINA *) calloc(1, sizeof(PAGINA));
 
     int pos = busca_binaria(pagina_atual, *key);
     
-    int vetor_extendido_keys[MAX_KEYS+1];
-    long vetor_extendido_filhos[MAX_KEYS+2];
+    int vetor_extendido_keys[MAX_KEYS+1]; // Auxiliar para keys
+    long vetor_extendido_rrns[MAX_KEYS+1]; // Auxiliar para rrns dos registros
+    long vetor_extendido_filhos[MAX_KEYS+2]; // Auxiliar para proximas paginas
 
 
-    // Copiar itens para vetores
+    // Copia itens para vetores
     memcpy(&vetor_extendido_keys, &pagina_atual->keys, sizeof(int) * MAX_KEYS);
+    memcpy(&vetor_extendido_rrns, &pagina_atual->rrns, sizeof(long) * MAX_KEYS);
     memcpy(&vetor_extendido_filhos, &pagina_atual->prox_paginas, sizeof(long) * (MAX_KEYS+1));
     
-    // Inserir key e filho direito promovidos nos vetores
+    // Insere key e filho direito promovidos nos vetores
+    // Key
     memcpy(&vetor_extendido_keys[pos+1], &vetor_extendido_keys[pos], sizeof(int) * (MAX_KEYS - pos));
     vetor_extendido_keys[pos] = *key;
+    // RRN
+    memcpy(&vetor_extendido_rrns[pos+1], &vetor_extendido_rrns[pos], sizeof(long) * (MAX_KEYS - pos));
+    vetor_extendido_rrns[pos] = *rrn;
+    // Filho direito
     memcpy(&vetor_extendido_filhos[pos+2], &vetor_extendido_filhos[pos+1], sizeof(long) * (MAX_KEYS - pos));
     vetor_extendido_filhos[pos+1] = *filho_direito_promovido;
 
     // Separa a pagina atual em duas partes
+    // Primeira pagina
     memcpy(primeira_metade->keys, &vetor_extendido_keys[0], sizeof(int) * (MAX_KEYS - MIN_KEYS));
-    primeira_metade->num_keys = MAX_KEYS - MIN_KEYS;
+    memcpy(primeira_metade->rrns, &vetor_extendido_rrns[0], sizeof(long) * (MAX_KEYS - MIN_KEYS));
     memcpy(primeira_metade->prox_paginas, &vetor_extendido_filhos[0], sizeof(long) * (MAX_KEYS - MIN_KEYS + 1));
-    
+    primeira_metade->num_keys = MAX_KEYS - MIN_KEYS;
+    // Segunda pagina
     memcpy(segunda_metade->keys, &vetor_extendido_keys[MIN_KEYS + 2], sizeof(int) * (MIN_KEYS));
-    segunda_metade->num_keys = MIN_KEYS;
+    memcpy(segunda_metade->rrns, &vetor_extendido_rrns[MIN_KEYS + 2], sizeof(long) * (MIN_KEYS));
     memcpy(segunda_metade->prox_paginas, &vetor_extendido_filhos[MIN_KEYS + 2], sizeof(long) * (MIN_KEYS+ 1));
+    segunda_metade->num_keys = MIN_KEYS;
 
     // Promove chave
     *key = vetor_extendido_keys[MAX_KEYS - MIN_KEYS];
+    *rrn = vetor_extendido_rrns[MAX_KEYS - MIN_KEYS];
     *filho_direito_promovido = append_pagina(segunda_metade);   
 }
 
-long busca(ARVORE *btree, int key) {
-    return -1;
+long busca_btree(ARVORE *arvore, int key) {
+    if(!arvore) return ERRO;
+
+    return busca(arvore->rrn_raiz, key);
+}
+
+long busca(long rrn, int key) {
+    if(rrn == 0) {
+        return ERRO;
+    }
+
+    PAGINA *pagina = le_pagina(rrn);
+    long proxima_pagina;
+
+    int pos = busca_binaria(pagina, key);
+
+    if(pagina->keys[pos] != key) {
+        proxima_pagina = pagina->prox_paginas[pos];
+        free(pagina);
+        return busca(proxima_pagina, key);
+    }
+
+    return pos;
 }
 
 /* Funcoes auxiliares */
@@ -150,16 +182,30 @@ PAGINA *le_pagina(long rrn) {
 }
 
 // Insere registro no vetor de keys
-void inserir_na_pagina(PAGINA *pagina, int key, long filho_direito) {
+void inserir_na_pagina(PAGINA *pagina, int key, long rrn, long filho_direito) {
     int pos = busca_binaria(pagina, key);
 
+    // Abre espaco para o novo item
     memcpy(&pagina->keys[pos+1], &pagina->keys[pos], sizeof(int) * (pagina->num_keys - pos));
+    memcpy(&pagina->rrns[pos+1], &pagina->rrns[pos], sizeof(long) * (pagina->num_keys - pos));
     memcpy(&pagina->prox_paginas[pos+2], &pagina->prox_paginas[pos+1], sizeof(long) * (pagina->num_keys - pos));
 
-    pagina->num_keys++;
+    // Insere item na pagina
     pagina->keys[pos] = key;
+    pagina->rrns[pos] = rrn;
     pagina->prox_paginas[pos+1] = filho_direito;
+    pagina->num_keys++;
     
+}
+
+// Atualiza a pagina no arquivo
+void reescreve_pagina(long rrn, PAGINA* pagina) {
+    FILE *fp = fopen(ARQ_BTREE, "r+");
+
+    fseek(fp, rrn, SEEK_SET);
+    fwrite(pagina, sizeof(PAGINA), 1, fp);
+
+    fclose(fp);
 }
 
 // Troca a raiz
@@ -185,7 +231,7 @@ int busca_binaria(PAGINA *pagina, int key) {
         meio = (inicio + fim) / 2;
 
         if(key == keys[meio]) {
-            return ERRO;
+            return meio;
         } else if(key < keys[meio]) {
             fim = meio - 1;
         } else {
