@@ -191,7 +191,7 @@ long busca(ARVORE *btree, int key) {
     if(!arv) return ERRO;
     /*PAGINA *pagina = ler_pagina(btree->rrn_raiz);
     int i = 0;
-    while(i < pagina->num_keys){
+    while(i < pagina->num_keys){ //pensar como verificar todas as páginas e até chegar em NULL
         long rrn = busca_binaria(pagina->prox_paginas[i],key);
         
     }*/
