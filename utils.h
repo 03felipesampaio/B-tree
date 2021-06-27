@@ -15,4 +15,7 @@ void update(ARVORE *arv);
 void exit_program(ARVORE *arv);
 void print_student(PAGINA *page);
 
+void limpa_arvore();
+void print_pagina(PAGINA *pg);
+
 #endif

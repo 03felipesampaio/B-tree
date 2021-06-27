@@ -6,8 +6,7 @@ int inserir(long rrn, int key, long *segunda_metade, int *key_promovida);
 int busca_binaria(PAGINA *pagina, int key);
 void inserir_na_pagina(PAGINA *pagina, int key, long filho_direito);
 void reescreve_pagina(long rrn, PAGINA* pagina);
-void split(PAGINA *pagina_atual, int key, long filho_direito_promovido,
-           int *chave_promovida, long *filho_direito, int pos) ;
+void split(PAGINA *pagina_atual, int key, long filho_direito_promovido, int *chave_promovida, long *filho_direito, int pos) ;
 
 ARVORE *cria_arvore() {
     ARVORE *nova_arvore = (ARVORE*) malloc (sizeof(ARVORE));
@@ -167,28 +166,6 @@ PAGINA *ler_pagina(long rrn) {
     return pagina;
 }
 
-int busca_binaria(PAGINA *pagina, int key) {
-    int tam = pagina->num_keys;
-    int *keys = pagina->keys;
-
-    int inicio = 0, fim = tam - 1;
-    int meio;
-
-    while (inicio <= fim) {
-        meio = (inicio + fim) / 2;
-
-        if(key == keys[meio]) {
-            return ERRO;
-        } else if(key < keys[meio]) {
-            fim = meio - 1;
-        } else {
-            inicio = meio + 1;
-        }
-    }
-
-    return inicio;
-}
-
 void inserir_na_pagina(PAGINA *pagina, int key, long filho_direito) {
     int pos = busca_binaria(pagina, key);
 
@@ -211,5 +188,36 @@ void reescreve_pagina(long rrn, PAGINA* pagina) {
 }
 
 long busca(ARVORE *btree, int key) {
-    return -1;
+    if(!arv) return ERRO;
+    /*PAGINA *pagina = ler_pagina(btree->rrn_raiz);
+    int i = 0;
+    while(i < pagina->num_keys){
+        long rrn = busca_binaria(pagina->prox_paginas[i],key);
+        
+    }*/
+    
+    if(rrn == -1) return ERRO; //não achou
+    return rrn;
+}
+
+long busca_binaria(PAGINA *pagina, int key) {
+    int tam = pagina->num_keys;
+    int *keys = pagina->keys;
+
+    long inicio = 0, fim = tam - 1;
+    long meio;
+
+    while (inicio <= fim) {
+        meio = (inicio + fim) / 2;
+
+        if(key == keys[meio]) {
+            return ERRO;
+        } else if(key < keys[meio]) {
+            fim = meio - 1;
+        } else {
+            inicio = meio + 1;
+        }
+    }
+
+    return inicio;
 }

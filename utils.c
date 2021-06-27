@@ -12,13 +12,9 @@ void clean_files() {
 }
 
 void insert(ARVORE *arv) {
-    int nUSP;
-    char name[30], course[30], surname[30];
-    float grade;
+    STUDENT student;
 
-    scanf("%d,%[^,],%[^,],%[^,],%f", &nUSP, name, surname, course, &grade);
-
-    STUDENT *new_student = create_student(nUSP, name, surname, course, grade);
+    STUDENT *new_student = create_student();
     inserir_btree(arv, new_student->nUSP);
     insert_student(arv, new_student);
 
@@ -29,26 +25,51 @@ void search(ARVORE *arv) {
     int key;
     
     scanf("%d", &key);
-    STUDENT student = busca(arv, key);
+    STUDENT *student = search_student(arv, key);
 
     print_student(student);
     free(student);
 }
 
+void update(ARVORE *arv) {
+    STUDENT student;
+
+    scanf("%d,%[^,],%[^,],%[^,],%f", &student.nUSP, student.name, student.surname, student.course, &student.grade);
+
+    /*Update Function*/
+    update_student(arv, student);
+    
+    /*testando se o update deu bom*/
+    search_student(arv, student.nUSP);
+}
+
 void print_student(STUDENT *s) {
-  if(!s) {
-    printf("Registro nao encontrado!\n");
-    return;
-  }
+    if(!s) {
+      printf("Registro nao encontrado!\n");
+      return;
+    }
 
-  printf("-------------------------------\n");
+    printf("-------------------------------\n");
 
-  printf("USP number: %d\nName: %s\nSurname: %s\nCourse: %s\nTest grade: %.2f\n", 
-         s->nUSP, s->name, s->surname,s->course, s->grade);
+    printf("USP number: %d\nName: %s\nSurname: %s\nCourse: %s\nTest grade: %.2f\n", s->nUSP, s->name, s->surname,s->course, s->grade);
 
-  printf("-------------------------------\n");
+    printf("-------------------------------\n");
 }
 
 void exit_program(ARVORE *arv) {
     close_file(students_class);
+}
+
+//funções para teste
+void limpa_arvore() {
+  FILE *fp = fopen(ARQ_BTREE, "w");
+  fclose(fp);
+}
+
+void print_pagina(PAGINA *pg) {
+  printf("Elementos da pag:  ");
+  for(int i = 0; i < pg->num_keys; i++) {
+    printf("%d ", pg->keys[i]);
+  }
+  printf("\n");
 }

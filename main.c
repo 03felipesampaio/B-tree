@@ -9,24 +9,11 @@
 #include "data.h"
 #include "utils.h"
 
-void limpa_arvore() {
-  FILE *fp = fopen(ARQ_BTREE, "w");
-  fclose(fp);
-}
-
-void print_pagina(PAGINA *pg) {
-  printf("Elementos da pag:  ");
-  for(int i = 0; i < pg->num_keys; i++) {
-    printf("%d ", pg->keys[i]);
-  }
-  printf("\n");
-}
-
 int main() {
   limpa_arvore();
   ARVORE *arv = cria_arvore();
 
-  /* char entrada[15];
+  char entrada[15];
 
   clean_files();
   CLASS *students_class = load_students();
@@ -42,8 +29,8 @@ int main() {
     scanf("%s", entrada);
   }
 
-  exit_program(students_class); */
-  
+  exit_program(students_class);
+  /*
   inserir_btree(arv, 5);
   inserir_btree(arv, 43);
   inserir_btree(arv, 12);
@@ -90,7 +77,7 @@ int main() {
   inserir_btree(arv, 85);
   inserir_btree(arv, 20);
   inserir_btree(arv, 44); */
-
+*/
 
   return 0;
 }

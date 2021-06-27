@@ -13,6 +13,7 @@
 
 #define ARQ_BTREE "binFiles/btree.dat"
 #define MAX_KEYS 3
+#define PAGESIZE 4096
 
 typedef struct registro {
   int key;

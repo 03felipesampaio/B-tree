@@ -6,7 +6,7 @@
 #include <string.h>
 #include <assert.h>
 #include "btree.h"
-#define ARQUIVO "binFiles/estudantes.data"
+#define ARQ_DAT "binFiles/estudantes.data"
 
 typedef struct {
     int nUSP;
@@ -16,7 +16,7 @@ typedef struct {
     float grade;
 } STUDENT;
 
-// Classroom struct
+// ainda vai existir?
 typedef struct {
     INDEX_LIST *indexes;
     FILE *class_file;

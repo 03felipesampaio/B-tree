@@ -1,15 +1,11 @@
 #include "data.h"
 
-STUDENT *create_student(int nUSP, char name[], char surname[], char course[], float grade) {
-    STUDENT *new_student = (STUDENT*) malloc (sizeof(STUDENT));
+STUDENT *create_student() {
+    STUDENT *student = (STUDENT*) malloc (sizeof(STUDENT));
 
-    new_student->nUSP = nUSP;
-    new_student->grade = grade;
-    strcpy(new_student->name, name);
-    strcpy(new_student->surname, surname);
-    strcpy(new_student->course, course);
+    scanf("%d,%[^,],%[^,],%[^,],%f", &student.nUSP, student.name, student.surname, student.course, &student.grade);
 
-    return new_student;
+    return student;
 }
 
 STUDENT search_student(ARVORE *arvore, int key) {
@@ -27,20 +23,27 @@ STUDENT search_student(ARVORE *arvore, int key) {
 }
 
 void insert_student(ARVORE *arvore, STUDENT *student) {
-    if(search_RRN(students_class->indexes, student->nUSP) != -1) {
+    if(busca(arvore, student->nUSP) != -1) {
         printf("O Registro ja existe!\n");
         return;
     }
     
-    fseek(students_class->class_file, 0, SEEK_END);
-    insert_index(students_class->indexes, ftell(students_class->class_file), student->nUSP);
+    fseek(ARQ_DAT, 0, SEEK_END);
+    insert_index(ARQ_DAT, ftell(students_class->class_file), student->nUSP); //O QUE ESTÁ FUNÇÃO FARIA?
     fwrite(student, sizeof(STUDENT), 1, students_class->class_file);
-    fflush(students_class->class_file);
-    students_class->len++;
+    fflush(ARQ_DAT);
+    students_class->len++; //ver se vai ficar
 }
 
-void update_student(ARVORE *arvore, int key) {
+void update_student(ARVORE *arvore, STUDENT student) {
+    int RRN = busca(arvore, key);
+    if(RRN == -1) {
+        printf("Registro nao encontrado!");
+        return;
+    }
 
+    fseek(ARQ_DAT, RRN, SEEK_SET);
+    write(student, sizeof(STUDENT), 1, ARQ_DAT);
 }
 
 void close_file(ARVORE *arv) {
