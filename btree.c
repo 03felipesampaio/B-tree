@@ -115,12 +115,13 @@ void split(PAGINA *pagina_atual, long *filho_direito_promovido, int *key, long *
 long busca_btree(ARVORE *arvore, int key) {
     if(!arvore) return ERRO;
 
+    printf("Vai entrar na raiz\n");
     return busca(arvore->rrn_raiz, key);
 }
 
 long busca(long rrn, int key) {
     if(rrn == 0) {
-        return ERRO;
+        return NAO_ENCONTRADO;
     }
 
     PAGINA *pagina = le_pagina(rrn);
@@ -131,10 +132,11 @@ long busca(long rrn, int key) {
     if(pagina->keys[pos] != key) {
         proxima_pagina = pagina->prox_paginas[pos];
         free(pagina);
+        printf("Vai entrar no filho %d\n", pos);
         return busca(proxima_pagina, key);
     }
 
-    return pos;
+    return pagina->rrns[pos];
 }
 
 /* Funcoes auxiliares */
