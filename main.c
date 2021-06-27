@@ -16,15 +16,14 @@ int main() {
   char entrada[15];
 
   clean_files();
-  CLASS *students_class = load_students();
 
   scanf("%s", entrada);
 
   while (strcmp("exit", entrada)) {
 
-    if (!strcmp("insert", comand)) insert(students_class);
-    else if (!strcmp("search", comand)) search(students_class);
-    else if (!strcmp("update", comand)) update(students_class);
+    if (!strcmp("insert", comand)) insert(ARVORE *arv);
+    else if (!strcmp("search", comand)) search(ARVORE *arv);
+    else if (!strcmp("update", comand)) update(ARVORE *arv);
 
     scanf("%s", entrada);
   }

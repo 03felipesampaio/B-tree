@@ -19,7 +19,7 @@ typedef struct {
 STUDENT *create_student();
 STUDENT search_student(ARVORE *arvore, int key);
 void insert_student(ARVORE *arvore, STUDENT *student);
-void update_student(ARVORE *arvore, STUDENT student);
+void update_student(ARVORE *arvore, STUDENT *student);
 void close_file(ARVORE *arv);
 
 #endif

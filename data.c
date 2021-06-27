@@ -35,15 +35,15 @@ void insert_student(ARVORE *arvore, STUDENT *student) {
     inserir_btree(arvore, key, rrn);  
 }
 
-void update_student(ARVORE *arvore, STUDENT student) {
-    long rrn = busca_btree(arvore, key);
+void update_student(ARVORE *arvore, STUDENT *student) {
+    long rrn = busca_btree(arvore, student->key);
     if(rrn == -1) {
         printf("Registro nao encontrado!");
         return;
     }
-
-    fseek(ARQ_DAT, RRN, SEEK_SET);
-    write(student, sizeof(STUDENT), 1, ARQ_DAT);
+    FILE *fp = fopen(ARQ_DAT, "a");
+    fseek(fp, rrn, SEEK_SET);
+    write(student, sizeof(STUDENT), 1, fp);
 }
 
 void close_file(ARVORE *arv) {

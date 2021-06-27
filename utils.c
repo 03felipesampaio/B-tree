@@ -1,7 +1,8 @@
 #include "utils.h"
 
 void clean_files() {
-    // Erase all content in index and data files
+
+	// Apague todo o conteúdo do índice e dos arquivos de dados
     FILE *fp;
 
     fp = fopen("binFiles/index.bin", "w");
@@ -14,7 +15,7 @@ void clean_files() {
 void insert(ARVORE *arv) {
     STUDENT student;
 
-    STUDENT *new_student = create_student();
+    STUDENT *new_student = create_student(nUSP,&name,&surname,&course,grade);
     insert_student(arv, new_student);
 
     free(new_student);
@@ -31,15 +32,15 @@ void search(ARVORE *arv) {
 }
 
 void update(ARVORE *arv) {
-    STUDENT student;
-
-    scanf("%d,%[^,],%[^,],%[^,],%f", &student.nUSP, student.name, student.surname, student.course, &student.grade);
-
-    /*Update Function*/
-    update_student(arv, student);
+    STUDENT *update_student = create_student();
+    
+    /*Funcao update*/
+    update_student(arv, update_student);
     
     /*testando se o update deu bom*/
-    search_student(arv, student.nUSP);
+    search_student(arv, update_student->nUSP);
+    
+    free(update_student);
 }
 
 void print_student(STUDENT *s) {
