@@ -16,10 +16,10 @@ typedef struct {
     float grade;
 } STUDENT;
 
-STUDENT *create_student(int nUSP, char name[], char surname[], char course[], float grade);
-CLASS *load_students();
-STUDENT *search_student(CLASS *student_class, int key);
-void insert_student(CLASS *students_class, STUDENT *student);
-void close_file(CLASS *students_class);
+STUDENT *create_student();
+STUDENT search_student(ARVORE *arvore, int key);
+void insert_student(ARVORE *arvore, STUDENT *student);
+void update_student(ARVORE *arvore, STUDENT student);
+void close_file(ARVORE *arv);
 
 #endif
