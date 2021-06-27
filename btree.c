@@ -1,7 +1,7 @@
 #include "btree.h"
 
 long append_pagina(PAGINA *nova_pagina);
-void atualiza_raiz(ARVORE *arvore, int key, long primeira_metade, long segunda_metade);
+void atualiza_raiz(ARVORE *arvore, int key, long rrn, long primeira_metade, long segunda_metade);
 int inserir(long rrn_pag, int *key, long *rrn_reg, long *filho_direito_promovido);
 int busca_binaria(PAGINA *pagina, int key);
 void inserir_na_pagina(PAGINA *pagina, int key, long rrn, long filho_direito);
@@ -19,7 +19,7 @@ void inserir_btree(ARVORE *arvore, int key, long rrn_reg) {
 
     // Nesse caso houve uma promocao na raiz, devemos criar outra raiz
     if(flag == PROMOVIDA) {
-        atualiza_raiz(arvore, key, arvore->rrn_raiz, segunda_metade);
+        atualiza_raiz(arvore, key, rrn_reg, arvore->rrn_raiz, segunda_metade);
     }
 }
 
@@ -127,7 +127,6 @@ long busca(long rrn, int key) {
     long proxima_pagina;
 
     int pos = busca_binaria(pagina, key);
-    printf("\nestou aqui nenem e a posição é %d", pos);
 
     if(pagina->keys[pos] != key) {
         proxima_pagina = pagina->prox_paginas[pos];
@@ -135,7 +134,7 @@ long busca(long rrn, int key) {
         return busca(proxima_pagina, key);
     }
 
-    return rrn;
+    return pos;
 }
 
 /* Funcoes auxiliares */
@@ -210,10 +209,11 @@ void reescreve_pagina(long rrn, PAGINA* pagina) {
 }
 
 // Troca a raiz
-void atualiza_raiz(ARVORE *arvore, int key, long primeira_metade, long segunda_metade) {
+void atualiza_raiz(ARVORE *arvore, int key, long rrn, long primeira_metade, long segunda_metade) {
     PAGINA *nova_pagina = (PAGINA*) calloc (1, sizeof(PAGINA));
 
     nova_pagina->keys[0] = key;
+    nova_pagina->rrns[0] = rrn;
     nova_pagina->prox_paginas[0] = primeira_metade;
     nova_pagina->prox_paginas[1] = segunda_metade;
     nova_pagina->num_keys++;
