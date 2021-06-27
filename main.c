@@ -77,7 +77,6 @@ int main() {
   inserir_btree(arv, 85);
   inserir_btree(arv, 20);
   inserir_btree(arv, 44); */
-*/
 
   return 0;
 }

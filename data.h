@@ -16,13 +16,6 @@ typedef struct {
     float grade;
 } STUDENT;
 
-// ainda vai existir?
-typedef struct {
-    INDEX_LIST *indexes;
-    FILE *class_file;
-    int len;
-} CLASS;
-
 STUDENT *create_student(int nUSP, char name[], char surname[], char course[], float grade);
 CLASS *load_students();
 STUDENT *search_student(CLASS *student_class, int key);

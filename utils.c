@@ -15,7 +15,6 @@ void insert(ARVORE *arv) {
     STUDENT student;
 
     STUDENT *new_student = create_student();
-    inserir_btree(arv, new_student->nUSP);
     insert_student(arv, new_student);
 
     free(new_student);

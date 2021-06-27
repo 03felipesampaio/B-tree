@@ -23,16 +23,16 @@ STUDENT search_student(ARVORE *arvore, int key) {
 }
 
 void insert_student(ARVORE *arvore, STUDENT *student) {
-    if(busca_btree(arvore, student->nUSP) != -1) {
+    long rrn = busca_btree(arvore, student->nUSP) ;
+    if(rrn != NAO_ENCONTRADO) {
         printf("O Registro ja existe!\n");
         return;
     }
-    
-    fseek(ARQ_DAT, 0, SEEK_END);
-    insert_index(ARQ_DAT, ftell(students_class->class_file), student->nUSP); //O QUE ESTÁ FUNÇÃO FARIA?
-    fwrite(student, sizeof(STUDENT), 1, ARQ_DAT);
-    fflush(ARQ_DAT);
-    students_class->len++; //ver se vai ficar
+    FILE *fp = fopen(ARQ_DAT, "a");
+    rrn = ftell(fp);
+    fwrite(student, sizeof(STUDENT), 1, fp);
+    fclose(fp);
+    inserir_btree(arvore, key, rrn);  
 }
 
 void update_student(ARVORE *arvore, STUDENT student) {
