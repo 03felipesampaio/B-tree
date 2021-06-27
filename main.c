@@ -13,22 +13,20 @@ int main() {
   limpa_arvore();
   ARVORE *arv = cria_arvore();
 
-  char entrada[15];
+  char comand[15];
 
   clean_files();
 
-  scanf("%s", entrada);
+  scanf("%s", comand);
 
-  while (strcmp("exit", entrada)) {
+  while (strcmp("exit", comand)) {
 
-    if (!strcmp("insert", comand)) insert(ARVORE *arv);
-    else if (!strcmp("search", comand)) search(ARVORE *arv);
-    else if (!strcmp("update", comand)) update(ARVORE *arv);
+    if (!strcmp("insert", comand)) insert(arv);
+    else if (!strcmp("search", comand)) search(arv);
+    else if (!strcmp("update", comand)) update(arv);
 
-    scanf("%s", entrada);
+    scanf("%s", comand);
   }
-
-  exit_program(students_class);
   /*
   inserir_btree(arv, 5);
   inserir_btree(arv, 43);
@@ -61,15 +59,12 @@ int main() {
   print_pagina(p7);
   print_pagina(p8);
 
-  /* 
                           [43, , ]
          [8,   16   ,     ]                [76,    , ]
     [1, 5, ]  [12, , ]  [26, , ]      [64, 65,  ]     [80, , ]
-  
-   */
 
   
-  /* inserir_btree(arv, 87);
+  inserir_btree(arv, 87);
   inserir_btree(arv, 69);
   inserir_btree(arv, 36);
   inserir_btree(arv, 45);

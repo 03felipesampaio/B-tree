@@ -3,7 +3,7 @@
 long append_pagina(PAGINA *nova_pagina);
 void atualiza_raiz(ARVORE *arvore, int key, long primeira_metade, long segunda_metade);
 int inserir(long rrn_pag, int *key, long *rrn_reg, long *filho_direito_promovido);
-long busca_binaria(PAGINA *pagina, int key);
+int busca_binaria(PAGINA *pagina, int key);
 void inserir_na_pagina(PAGINA *pagina, int key, long rrn, long filho_direito);
 void reescreve_pagina(long rrn, PAGINA* pagina);
 void split(PAGINA *pagina_atual, long *filho_direito_promovido, int *key, long *rrn) ;
@@ -126,7 +126,8 @@ long busca(long rrn, int key) {
     PAGINA *pagina = le_pagina(rrn);
     long proxima_pagina;
 
-    long pos = busca_binaria(pagina, key);
+    int pos = busca_binaria(pagina, key);
+    printf("\nestou aqui nenem e a posição é %d", pos);
 
     if(pagina->keys[pos] != key) {
         proxima_pagina = pagina->prox_paginas[pos];
@@ -134,7 +135,7 @@ long busca(long rrn, int key) {
         return busca(proxima_pagina, key);
     }
 
-    return pos;
+    return rrn;
 }
 
 /* Funcoes auxiliares */
@@ -220,12 +221,12 @@ void atualiza_raiz(ARVORE *arvore, int key, long primeira_metade, long segunda_m
     arvore->rrn_raiz = append_pagina(nova_pagina);
 }
 
-long busca_binaria(PAGINA *pagina, int key) {
+int busca_binaria(PAGINA *pagina, int key) {
     int tam = pagina->num_keys;
     int *keys = pagina->keys;
 
-    long inicio = 0, fim = tam - 1;
-    long meio;
+    int inicio = 0, fim = tam - 1;
+    int meio;
 
     while (inicio <= fim) {
         meio = (inicio + fim) / 2;

@@ -5,19 +5,17 @@ void clean_files() {
 	// Apague todo o conteúdo do índice e dos arquivos de dados
     FILE *fp;
 
-    fp = fopen("binFiles/index.bin", "w");
+    fp = fopen("ARQ_BTREE", "w");
     fclose(fp);
 
-    fp = fopen("binFiles/data.bin", "w");
+    fp = fopen("ARQ_DAT", "w");
     fclose(fp);
 }
 
 void insert(ARVORE *arv) {
-    STUDENT student;
-
-    STUDENT *new_student = create_student(nUSP,&name,&surname,&course,grade);
+    STUDENT *new_student = create_student();
     insert_student(arv, new_student);
-
+    print_student(new_student);
     free(new_student);
 }
 
@@ -32,15 +30,15 @@ void search(ARVORE *arv) {
 }
 
 void update(ARVORE *arv) {
-    STUDENT *update_student = create_student();
+    STUDENT *up_student = create_student();
     
     /*Funcao update*/
-    update_student(arv, update_student);
+    update_student(arv, up_student);
     
     /*testando se o update deu bom*/
-    search_student(arv, update_student->nUSP);
+    search_student(arv, up_student->nUSP);
     
-    free(update_student);
+    free(up_student);
 }
 
 void print_student(STUDENT *s) {
@@ -54,10 +52,6 @@ void print_student(STUDENT *s) {
     printf("USP number: %d\nName: %s\nSurname: %s\nCourse: %s\nTest grade: %.2f\n", s->nUSP, s->name, s->surname,s->course, s->grade);
 
     printf("-------------------------------\n");
-}
-
-void exit_program(ARVORE *arv) {
-    close_file(students_class);
 }
 
 //funções para teste
