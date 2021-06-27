@@ -31,5 +31,6 @@ ARVORE *cria_arvore();
 void inserir_btree(ARVORE *arvore, int key, long rrn_reg);
 PAGINA *le_pagina(long rrn);
 long busca_btree(ARVORE *arvore, int key);
+void salva_arvore(ARVORE *arvore);
 
 #endif

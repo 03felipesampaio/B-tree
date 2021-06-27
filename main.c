@@ -27,6 +27,8 @@ int main() {
 
     scanf("%s", comand);
   }
+
+  salva_arvore(arv);
   /*
   inserir_btree(arv, 5);
   inserir_btree(arv, 43);

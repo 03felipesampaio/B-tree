@@ -124,7 +124,7 @@ void split(PAGINA *pagina_atual, long *filho_direito_promovido, int *key, long *
 long busca_btree(ARVORE *arvore, int key) {
     if(!arvore) return ERRO;
 
-    printf("Vai entrar na raiz\n");
+    //printf("Vai entrar na raiz\n");
     return busca(arvore->rrn_raiz, key);
 }
 
@@ -141,7 +141,7 @@ long busca(long rrn, int key) {
     if(pagina->keys[pos] != key) {
         proxima_pagina = pagina->prox_paginas[pos];
         free(pagina);
-        printf("Vai entrar no filho %d\n", pos);
+        //printf("Vai entrar no filho %d\n", pos);
         return busca(proxima_pagina, key);
     }
 
@@ -156,9 +156,9 @@ ARVORE *cria_arvore() {
 
     // Caso a arvore exista
     if(fread(nova_arvore, sizeof(ARVORE), 1, fp)) {
-        printf("Arvore ja existia\n");
+        //printf("Arvore ja existia\n");
     } else { // Caso a arvore nao exista
-        printf("Arvore nao existia\n");
+        //printf("Arvore nao existia\n");
         nova_arvore->rrn_raiz = 0;
         nova_arvore->m = MAX_KEYS;
         fwrite(nova_arvore, sizeof(ARVORE), 1, fp); // Escreve arvore no arquivo

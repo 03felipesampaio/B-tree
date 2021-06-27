@@ -15,7 +15,7 @@ void clean_files() {
 void insert(ARVORE *arv) {
     STUDENT *new_student = create_student();
     insert_student(arv, new_student);
-    print_student(new_student);
+    //print_student(new_student);
     free(new_student);
 }
 
@@ -34,9 +34,10 @@ void update(ARVORE *arv) {
     
     /*Funcao update*/
     update_student(arv, up_student);
+    //printf("\nto aqui no rio mogi\n");
     
     /*testando se o update deu bom*/
-    search_student(arv, up_student->nUSP);
+    //search_student(arv, up_student->nUSP);
     
     free(up_student);
 }
@@ -49,7 +50,7 @@ void print_student(STUDENT *s) {
 
     printf("-------------------------------\n");
 
-    printf("USP number: %d\nName: %s\nSurname: %s\nCourse: %s\nTest grade: %.2f\n", s->nUSP, s->name, s->surname,s->course, s->grade);
+    printf("nUSP: %d\nNome: %s\nSobrenome: %s\nCurso: %s\nNota: %.2f\n", s->nUSP, s->name, s->surname,s->course, s->grade);
 
     printf("-------------------------------\n");
 }
