@@ -9,6 +9,15 @@ void reescreve_pagina(long rrn, PAGINA* pagina);
 void split(PAGINA *pagina_atual, long *filho_direito_promovido, int *key, long *rrn) ;
 long busca(long rrn, int key);
 
+void salva_arvore(ARVORE *arvore) {
+    FILE *fp = fopen(ARQ_BTREE, "r+");
+
+    fwrite(arvore, sizeof(ARVORE), 1, fp);
+    fclose(fp);
+
+    free(arvore);
+}
+
 // Funcao auxiliar para inserir na btree
 void inserir_btree(ARVORE *arvore, int key, long rrn_reg) {
     int flag; // Flag da funcao inserir
