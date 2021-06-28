@@ -1,3 +1,12 @@
+/*
+Arquivo: data.h
+
+Autores:
+  Álefe Alves Silva - 11218601
+  Felipe Sampaio Amorim - 11275050
+  Márcio Guilherme Vieira Silva - 11355786
+*/
+
 #ifndef _DATA_
 #define _DATA_
 
