@@ -1,13 +1,4 @@
-/*
-Arquivo: utils.h
-
-Autores:
-  Álefe Alves Silva - 11218601
-  Felipe Sampaio Amorim - 11275050
-  Márcio Guilherme Vieira Silva - 11355786
-*/
-
-#ifndef _UTILS_
+/* #ifndef _UTILS_
 #define _UTILS_
 
 #include <stdio.h>
@@ -17,10 +8,11 @@ Autores:
 #include "btree.h"
 #include "data.h"
 
-void clean_files(); //apaga todo o conteúdo do índice e dos arquivos de dados
-void insert(ARVORE *); //função auxiliar para inserção na árvore e no arquivo de dados
-void search(ARVORE *); //função auxiliar para busca do RRN na árvore e do estudante no arquivo de dados
-void update(ARVORE *); //função auxiliar para atualizar as informações de um aluno no arquivo de dados
-void print_student(STUDENT *); //função para printar um estudante
+void clean_files();
+void insert(CLASS *students_class);
+void search(CLASS *students_class);
+void delete(CLASS *students_class);
+void exit_program(CLASS *students_class);
+void print_student(STUDENT *s);
 
-#endif
+#endif */

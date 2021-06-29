@@ -1,12 +1,3 @@
-/*
-Arquivo: btree.c
-
-Autores:
-  Álefe Alves Silva - 11218601
-  Felipe Sampaio Amorim - 11275050
-  Márcio Guilherme Vieira Silva - 11355786
-*/
-
 #include "btree.h"
 
 long append_pagina(PAGINA *nova_pagina);
@@ -36,7 +27,9 @@ void inserir_btree(ARVORE *arvore, int key, long rrn_reg) {
     flag = inserir(arvore->rrn_raiz, &key, &rrn_reg, &segunda_metade);
 
     // Nesse caso houve uma promocao na raiz, devemos criar outra raiz
-    if(flag == PROMOVIDA) atualiza_raiz(arvore, key, rrn_reg, arvore->rrn_raiz, segunda_metade);
+    if(flag == PROMOVIDA) {
+        atualiza_raiz(arvore, key, rrn_reg, arvore->rrn_raiz, segunda_metade);
+    }
 }
 
 int inserir(long rrn_pag, int *key, long *rrn_reg, long *filho_direito_promovido) {
@@ -44,7 +37,9 @@ int inserir(long rrn_pag, int *key, long *rrn_reg, long *filho_direito_promovido
     int flag, pos;
     
     // Condicao de parada da recursao
-    if(rrn_pag == 0) return PROMOVIDA;
+    if(rrn_pag == 0) {
+        return PROMOVIDA;
+    }
 
     // Le a pagina no arquivo
     pagina_atual = le_pagina(rrn_pag);
@@ -52,7 +47,7 @@ int inserir(long rrn_pag, int *key, long *rrn_reg, long *filho_direito_promovido
     // Encontra posicao de insercao
     pos = busca_binaria(pagina_atual, *key);
     if(pagina_atual->keys[pos] == *key) {
-        printf("O Registro ja existe!\n");
+        printf("A key ja estra inserida\n");
         return ERRO;
     }
 
@@ -115,9 +110,9 @@ void split(PAGINA *pagina_atual, long *filho_direito_promovido, int *key, long *
     memcpy(primeira_metade->prox_paginas, &vetor_extendido_filhos[0], sizeof(long) * (MAX_KEYS - MIN_KEYS + 1));
     primeira_metade->num_keys = MAX_KEYS - MIN_KEYS;
     // Segunda pagina
-    memcpy(segunda_metade->keys, &vetor_extendido_keys[MIN_KEYS + 2], sizeof(int) * (MIN_KEYS));
-    memcpy(segunda_metade->rrns, &vetor_extendido_rrns[MIN_KEYS + 2], sizeof(long) * (MIN_KEYS));
-    memcpy(segunda_metade->prox_paginas, &vetor_extendido_filhos[MIN_KEYS + 2], sizeof(long) * (MIN_KEYS+ 1));
+    memcpy(segunda_metade->keys, &vetor_extendido_keys[MAX_KEYS - MIN_KEYS + 1], sizeof(int) * (MIN_KEYS));
+    memcpy(segunda_metade->rrns, &vetor_extendido_rrns[MAX_KEYS - MIN_KEYS + 1], sizeof(long) * (MIN_KEYS));
+    memcpy(segunda_metade->prox_paginas, &vetor_extendido_filhos[MAX_KEYS - MIN_KEYS + 1], sizeof(long) * (MIN_KEYS+ 1));
     segunda_metade->num_keys = MIN_KEYS;
 
     // Promove chave
@@ -129,6 +124,7 @@ void split(PAGINA *pagina_atual, long *filho_direito_promovido, int *key, long *
 long busca_btree(ARVORE *arvore, int key) {
     if(!arvore) return ERRO;
 
+    printf("Vai entrar na raiz\n");
     return busca(arvore->rrn_raiz, key);
 }
 
@@ -145,6 +141,7 @@ long busca(long rrn, int key) {
     if(pagina->keys[pos] != key) {
         proxima_pagina = pagina->prox_paginas[pos];
         free(pagina);
+        printf("Vai entrar no filho %d\n", pos);
         return busca(proxima_pagina, key);
     }
 
@@ -159,9 +156,9 @@ ARVORE *cria_arvore() {
 
     // Caso a arvore exista
     if(fread(nova_arvore, sizeof(ARVORE), 1, fp)) {
-        //printf("Arvore ja existia\n");
-        //return NULL;
+        printf("Arvore ja existia\n");
     } else { // Caso a arvore nao exista
+        printf("Arvore nao existia\n");
         nova_arvore->rrn_raiz = 0;
         nova_arvore->m = MAX_KEYS;
         fwrite(nova_arvore, sizeof(ARVORE), 1, fp); // Escreve arvore no arquivo
@@ -191,10 +188,11 @@ PAGINA *le_pagina(long rrn) {
     fread(pagina, sizeof(PAGINA), 1, fp);
     
     fclose(fp);
-
+    // printf("Leu pagina, primeiro elemento = %d\n", pagina->keys[0]);
     return pagina;
 }
 
+// Insere registro no vetor de keys
 void inserir_na_pagina(PAGINA *pagina, int key, long rrn, long filho_direito) {
     int pos = busca_binaria(pagina, key);
 
@@ -244,9 +242,13 @@ int busca_binaria(PAGINA *pagina, int key) {
     while (inicio <= fim) {
         meio = (inicio + fim) / 2;
 
-        if(key == keys[meio]) return meio;
-        else if(key < keys[meio]) fim = meio - 1;
-        else inicio = meio + 1;
+        if(key == keys[meio]) {
+            return meio;
+        } else if(key < keys[meio]) {
+            fim = meio - 1;
+        } else {
+            inicio = meio + 1;
+        }
     }
 
     return inicio;

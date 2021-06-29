@@ -1,13 +1,4 @@
-/*
-Arquivo: data.h
-
-Autores:
-  Álefe Alves Silva - 11218601
-  Felipe Sampaio Amorim - 11275050
-  Márcio Guilherme Vieira Silva - 11355786
-*/
-
-#ifndef _DATA_
+/* #ifndef _DATA_
 #define _DATA_
 
 #include <stdio.h>
@@ -15,7 +6,6 @@ Autores:
 #include <string.h>
 #include <assert.h>
 #include "btree.h"
-#define ARQ_DAT "binFiles/estudantes.data"
 
 typedef struct {
     int nUSP;
@@ -25,10 +15,18 @@ typedef struct {
     float grade;
 } STUDENT;
 
-STUDENT *create_student();
-STUDENT *search_student(ARVORE *arvore, int key);
-void insert_student(ARVORE *arvore, STUDENT *student);
-void update_student(ARVORE *arvore, STUDENT *student);
-void close_file(ARVORE *arv);
+// Classroom struct
+typedef struct {
+    INDEX_LIST *indexes;
+    FILE *class_file;
+    int len;
+} CLASS;
 
-#endif
+STUDENT *create_student(int nUSP, char name[], char surname[], char course[], float grade);
+CLASS *load_students();
+STUDENT *search_student(CLASS *student_class, int key);
+void insert_student(CLASS *students_class, STUDENT *student);
+void remove_student(CLASS *students_class, int key);
+void close_file(CLASS *students_class);
+
+#endif */

@@ -1,55 +1,60 @@
-/*
-Arquivo: utils.c
-
-Autores:
-  Álefe Alves Silva - 11218601
-  Felipe Sampaio Amorim - 11275050
-  Márcio Guilherme Vieira Silva - 11355786
-*/
-
-#include "utils.h"
+/* #include "utils.h"
 
 void clean_files() {
+    // Erase all content in index and data files
     FILE *fp;
 
-    fp = fopen("ARQ_BTREE", "w");
+    fp = fopen("binFiles/index.bin", "w");
     fclose(fp);
 
-    fp = fopen("ARQ_DAT", "w");
+    fp = fopen("binFiles/data.bin", "w");
     fclose(fp);
 }
 
-void insert(ARVORE *arv) {
-    STUDENT *new_student = create_student();
-    insert_student(arv, new_student);
+void insert(CLASS *students_class) {
+    int nUSP;
+    char name[30], course[30], surname[30];
+    float grade;
+
+    scanf("%d,%[^,],%[^,],%[^,],%f", &nUSP, name, surname, course, &grade);
+
+    STUDENT *new_student = create_student(nUSP, name, surname, course, grade);
+
+    insert_student(students_class, new_student);
+
     free(new_student);
 }
 
-void search(ARVORE *arv) {
+void search(CLASS *students_class) {
     int key;
     
     scanf("%d", &key);
-    STUDENT *student = search_student(arv, key);
-
+    STUDENT* student = search_student(students_class, key);
     print_student(student);
     free(student);
 }
 
-void update(ARVORE *arv) {
-    STUDENT *up_student = create_student();
-
-    update_student(arv, up_student);
+void delete(CLASS *students_class) {
+    int key;
     
-    free(up_student);
+    scanf("%d", &key);
+    remove_student(students_class, key);
 }
 
 void print_student(STUDENT *s) {
-    if(!s) {
-      printf("Registro nao encontrado!\n");
-      return;
-    }
+  if(!s) {
+    printf("Registro nao encontrado!\n");
+    return;
+  }
 
-    printf("-------------------------------\n");
-    printf("nUSP: %d\nNome: %s\nSobrenome: %s\nCurso: %s\nNota: %.2f\n", s->nUSP, s->name, s->surname,s->course, s->grade);
-    printf("-------------------------------\n");
+  printf("-------------------------------\n");
+
+  printf("USP number: %d\nName: %s\nSurname: %s\nCourse: %s\nTest grade: %.2f\n", 
+         s->nUSP, s->name, s->surname,s->course, s->grade);
+
+  printf("-------------------------------\n");
 }
+
+void exit_program(CLASS *students_class) {
+    close_file(students_class);
+} */
